@@ -1,6 +1,6 @@
 <?php
 
-namespace App\Etis\EveOnline\Market\Orders;
+namespace EveOnline\Market\Orders;
 
 use Illuminate\Support\ServiceProvider;
 
@@ -29,7 +29,7 @@ class OrderProvider extends ServiceProvider
         $this->app->singleton('eveonline.region.orders', function() {
             $client        = new Client();
             $eveLogHandler = new EveLogHandler();
-            
+
             return new Order($client, $eveLogHandler);
         });
 

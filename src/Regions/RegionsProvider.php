@@ -1,6 +1,6 @@
 <?php
 
-namespace App\Etis\EveOnline\Regions;
+namespace EveOnline\Regions;
 
 use Illuminate\Support\ServiceProvider;
 

@@ -1,6 +1,6 @@
 <?php
 
-namespace App\Etis\EveOnline\Market\Types;
+namespace EveOnline\Market\Types;
 
 use Illuminate\Support\Facades\Facade;
 
