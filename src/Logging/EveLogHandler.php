@@ -26,6 +26,6 @@ class EveLogHandler {
     }
 
     public function setUpStreamHandler($fileName) {
-        return new StreamHandler(storage_path($fileName), Logger::INFO);
+        return new StreamHandler(storage_path('logs/' . $fileName), Logger::INFO);
     }
 }
