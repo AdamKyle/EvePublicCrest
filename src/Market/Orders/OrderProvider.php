@@ -4,6 +4,9 @@ namespace App\Etis\EveOnline\Market\Orders;
 
 use Illuminate\Support\ServiceProvider;
 
+use GuzzleHttp\Client;
+use EveOnline\Logging\EveLogHandler;
+
 class OrderProvider extends ServiceProvider
 {
     /**
@@ -24,7 +27,10 @@ class OrderProvider extends ServiceProvider
     public function register()
     {
         $this->app->singleton('eveonline.region.orders', function() {
-            return new Order();
+            $client        = new Client();
+            $eveLogHandler = new EveLogHandler();
+            
+            return new Order($client, $eveLogHandler);
         });
 
         $this->app->alias('eveonline.region.orders', Order::class);

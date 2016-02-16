@@ -4,6 +4,9 @@ namespace EveOnline\Market\History;
 
 use Illuminate\Support\ServiceProvider;
 
+use GuzzleHttp\Client;
+use EveOnline\Logging\EveLogHandler;
+
 class MarketHistoryProvider extends ServiceProvider
 {
     /**

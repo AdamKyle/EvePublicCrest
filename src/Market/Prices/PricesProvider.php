@@ -4,6 +4,9 @@ namespace App\Etis\EveOnline\Market\Prices;
 
 use Illuminate\Support\ServiceProvider;
 
+use GuzzleHttp\Client;
+use EveOnline\Logging\EveLogHandler;
+
 class PricesProvider extends ServiceProvider
 {
     /**
@@ -23,10 +26,13 @@ class PricesProvider extends ServiceProvider
      */
     public function register()
     {
-        $this->app->singleton('eveonline.marketprices', function() {
-            return new Prices();
+        $this->app->singleton('eveonline.market.prices', function() {
+            $client        = new Client();
+            $eveLogHandler = new EveLogHandler();
+
+            return new Prices($client, $eveLogHandler);
         });
 
-        $this->app->alias('eveonline.marketprices', Prices::class);
+        $this->app->alias('eveonline.market.prices', Prices::class);
     }
 }

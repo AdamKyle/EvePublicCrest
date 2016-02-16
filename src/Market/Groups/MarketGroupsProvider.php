@@ -29,6 +29,7 @@ class MarketGroupsProvider extends ServiceProvider
         $this->app->singleton('eveonline.market.groups', function() {
             $client        = new Client();
             $eveLoghandler = new EveLogHandler();
+            
             return new Groups($client, $eveLoghandler);
         });
 

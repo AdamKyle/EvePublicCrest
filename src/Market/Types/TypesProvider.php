@@ -4,6 +4,9 @@ namespace App\Etis\EveOnline\Market\Types;
 
 use Illuminate\Support\ServiceProvider;
 
+use GuzzleHttp\Client;
+use EveOnline\Logging\EveLogHandler;
+
 class TypesProvider extends ServiceProvider
 {
     /**
@@ -24,7 +27,10 @@ class TypesProvider extends ServiceProvider
     public function register()
     {
         $this->app->singleton('eveonline.market.types', function() {
-            return new Types();
+            $client        = new Client();
+            $eveLogHandler = new EveLogHandler();
+
+            return new Types($client, $eveLogHandler);
         });
 
         $this->app->alias('eveonline.market.types', Types::class);
