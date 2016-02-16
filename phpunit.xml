@@ -1,0 +1,28 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<phpunit bootstrap="./tests/bootstrap.php"
+  backupGlobals="false"
+  colors="true"
+  convertErrorsToExceptions="true"
+  convertNoticesToExceptions="true"
+  convertWarningsToExceptions="true">
+
+  <testsuites>
+    <testsuite>
+      <directory>tests</directory>
+    </testsuite>
+  </testsuites>
+
+  <filter>
+    <whitelist>
+      <directory>src/</directory>
+    </whitelist>
+
+    <blacklist>
+      <directory>vendor/</directory>
+    </blacklist>
+  </filter>
+
+  <logging>
+    <log type="coverage-html" target="coverage" lowUpperBound="0" highUpperBound="100" />
+  </logging>
+</phpunit>

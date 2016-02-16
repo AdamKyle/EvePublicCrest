@@ -1,0 +1,4 @@
+/vendor
+/coverage
+/tmp
+.DS_Store
