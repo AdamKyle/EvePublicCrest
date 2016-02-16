@@ -29,11 +29,7 @@ class MarketGroups {
         $streamHandler = $this->eveLogHandler->setUpStreamHandler('eve_online_market_groups.log');
         $this->eveLogHandler->responseLog($response, $streamHandler);
 
-        if ($response->getStatusCode() === 200) {
-            return json_decode($response->getBody()->getContents());
-        } else {
-            return false;
-        }
+        return json_decode($response->getBody()->getContents());
     }
 
     public function createRequestsForGroups(array $groups) {
