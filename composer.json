@@ -1,5 +1,5 @@
 {
-    "name": "eveMarketPublicCrest",
+    "name": "eveonline/eve-market-details",
     "type": "library",
     "description": "EveOnline is a public crest API library that makes fetching api end points easier.",
     "keywords": ["framework", "http", "fetching", "api", "eveonline"],
