@@ -19,18 +19,12 @@ class Details {
     }
 
     public function details($href) {
-        try {
-            $response = $this->client->request('GET', $href);
 
-            $this->eveLogHandler->responseLog($response, $this->streamHandler);
+        $response = $this->client->request('GET', $href);
 
-            if ($response->getStatusCode() === 200) {
-                return json_decode($response->getBody()->getContents());
-            }
-        } catch(ServerException $servcerException) {
-            $this->eveLogHandler->messageLog('[Response Gave a 500, Tried once. Still Failed.]', $this->streamHandler);
-        }
+        $this->eveLogHandler->responseLog($response, $this->streamHandler);
 
-        return false;
+        return json_decode($response->getBody()->getContents());
+
     }
 }

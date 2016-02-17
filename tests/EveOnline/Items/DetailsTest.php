@@ -34,44 +34,4 @@ class DetailsTest extends \PHPUnit_Framework_TestCase {
 
         $this->assertNotFalse($response);
     }
-
-    public function testDetailsDoesReturnFalse() {
-
-        $logMock = $this->getLogMock();
-
-        $logMock->method('setUpStreamHandler')
-                ->with('eveonline_item_details.log')
-                ->willReturn(new StreamHandler('tmp/logName.com', Logger::INFO));
-
-        $mock = new MockHandler([
-            new Response(302, ['X-Foo' => 'Bar']),
-        ]);
-
-        $handler  = HandlerStack::create($mock);
-        $client   = new Client(['handler' => $handler]);
-        $details  = new EveOnline\Items\Details($client, $logMock);
-        $response = $details->details('example');
-
-        $this->assertFalse($response);
-    }
-
-    public function testDetailsDoesReturnFalseFor500() {
-
-        $logMock = $this->getLogMock();
-
-        $logMock->method('setUpStreamHandler')
-                ->with('eveonline_item_details.log')
-                ->willReturn(new StreamHandler('tmp/logName.com', Logger::INFO));
-
-        $mock = new MockHandler([
-            new Response(500, ['X-Foo' => 'Bar']),
-        ]);
-
-        $handler  = HandlerStack::create($mock);
-        $client   = new Client(['handler' => $handler]);
-        $details  = new EveOnline\Items\Details($client, $logMock);
-        $response = $details->details('example');
-
-        $this->assertFalse($response);
-    }
 }
