@@ -22,7 +22,7 @@ class OrderHandler {
         return new Pool($this->client, $this->requests, [
             'concurrency' => 18,
             'fulfilled'   => function ($response, $index) {
-                array_push($this->acceptedResponsesJson, $response->getBody()->getContents());
+                array_push($this->acceptedResponsesJson, json_decode($response->getBody()->getContents()));
             },
             'rejected'    => function ($reason, $index)  {
                 array_push($this->rejectedResponse, $reason);
