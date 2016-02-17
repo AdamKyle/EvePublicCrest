@@ -6,18 +6,41 @@ use GuzzleHttp\Client;
 use GuzzleHttp\Pool;
 use GuzzleHttp\Psr7\Request;
 
+/**
+ * Used with the Order Class to handle requests.
+ */
 class OrderHandler {
 
+
+    /**
+     * Guzzle Client.
+     */
     private $client;
 
+    /**
+     * Array of GuzzleHttp\Psr7\Request
+     */
     private $requests              = [];
+
+    /**
+     * Array of use GuzzleHttp\Psr7\Response;
+     */
     private $acceptedResponsesJson = [];
+
+    /**
+     * Array of reasons why the request failed.
+     */
     private $rejectedResponse      = [];
 
     public function __construct(Client $client) {
         $this->client = $client;
     }
 
+    /**
+     * Processes multiple regions pushing accpted requests to an array.
+     *
+     * Uses 18 concurrent connections.
+     */
     public function processMultipleRegions() {
         return new Pool($this->client, $this->requests, [
             'concurrency' => 18,
@@ -30,6 +53,11 @@ class OrderHandler {
         ]);
     }
 
+    /**
+     * Create a set of region requests for a pool.
+     *
+     * @param array of region hrefs, example: https://public-crest.eveonline.com/regions/11000001/
+     */
     public function createRegionRequestsForPool(Array $regionHrefs) {
         $this->resetContainers();
 
@@ -38,6 +66,15 @@ class OrderHandler {
         }
     }
 
+    /**
+     * Processes multiple requests at a time.
+     *
+     * Uses 18 concurrent connections.
+     *
+     * We also reset the responses container.
+     *
+     * @param array of GuzzleHttp\Psr7\Request
+     */
     public function processMultipleRequests(array $requests) {
         $this->resetResponsesContainer();
 

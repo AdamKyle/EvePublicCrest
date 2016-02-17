@@ -9,10 +9,21 @@ use GuzzleHttp\Psr7\Request;
 
 use EveOnline\Logging\EveLogHandler;
 
+/**
+ * Fetches all Buy/Sell orders or a region or all regions.
+ */
 class Order {
 
+    /**
+     * Guzzle Client.
+     */
     private $client;
 
+    /**
+     * Custom Eve Log Handler.
+     *
+     * @see EveOnline\Logging\EveLogHandler
+     */
     private $eveLogHandler;
 
     public function __construct(Client $client, EveLogHandler $eveLogHandler) {
@@ -20,6 +31,16 @@ class Order {
         $this->eveLogHandler = $eveLogHandler;
     }
 
+    /**
+     * Gets the buying details for a spefic item from a specific region.
+     *
+     * This function can return false meaning there are no buying orders for the
+     * that region.
+     *
+     * @param string $itemTypeHref, example: https://public-crest.eveonline.com/types/32772/
+     * @param json the region details json, example: https://public-crest.eveonline.com/regions/11000001/
+     * @return decoded json or false
+     */
     public function getBuyDetails($itemTypeHref, $regionDetailsJson) {
         if (!$regionDetailsJson) {
             return false;
@@ -28,6 +49,16 @@ class Order {
         return $this->getBuyOrders($regionDetailsJson->marketBuyOrders->href, $itemTypeHref);
     }
 
+    /**
+     * Gets the selling details for a spefic item from a specific region.
+     *
+     * This function can return false meaning there are no selling orders for the
+     * that region.
+     *
+     * @param string $itemTypeHref, example: https://public-crest.eveonline.com/types/32772/
+     * @param json the region details json, example: https://public-crest.eveonline.com/regions/11000001/
+     * @return decoded json or false
+     */
     public function getSellDetails($itemTypeHref, $regionDetailsJson) {
         if (!$regionDetailsJson) {
             return false;
@@ -36,10 +67,26 @@ class Order {
         return $this->getBuyOrders($regionDetailsJson->marketSellOrders->href, $itemTypeHref);
     }
 
+    /**
+     * Gets the region json for a specific region href.
+     *
+     * For example: https://public-crest.eveonline.com/regions/11000001/
+     *
+     * @param string regionHref, example: https://public-crest.eveonline.com/regions/11000001/
+     * @return json
+     */
     public function getRegionDetailsJson($regionHref) {
         return $this->getRegionDetails($regionHref);
     }
 
+    /**
+     * Searches All Regions for orders.
+     *
+     * Searches all regions for any orders.
+     *
+     * @param array of region urls to search through.
+     * @param OrderHandler $orderHandler
+     */
     public function searchAllRegionsForOrders(Array $regionHrefs, OrderHandler $orderHandler) {
         $orderHandler->createRegionRequestsForPool($regionHrefs);
 
@@ -49,10 +96,33 @@ class Order {
         $promise->wait();
     }
 
+    /**
+     * Creates a set of requests for the market details.
+     *
+     * Uses an array of responses and the item type we are searching for to see if there
+     * there are orders. The final argument determines if we want buying (true) or selling (false)
+     * orders for all regions listed.
+     *
+     * @param array decoded JSON responses
+     * @param string item type href, example: https://public-crest.eveonline.com/types/32772/
+     * @param boolean isBuying, true - yes, false - no.
+     * @return array of GuzzleHttp\Psr7\Request
+     */
     public function createRequestsForMarketDetailsPool(array $responses, $itemTypeHref, $isBuying) {
         return $this->getRegionOrderRequestsForPool($responses, $isBuying, $itemTypeHref);
     }
 
+    /**
+     * Gets all the details about the market for a specific item
+     *
+     * Based on `searchAllRegionsForOrders`, we then use the `createRequestsForMarketDetailsPool` to createdRequests
+     * responses that then get used with this function to give you all the regions selling that item and there associated
+     * details.
+     *
+     * @param OrderHandler $orderHandler
+     * @param array of GuzzleHttp\Psr7\Request
+     * @return array of decoded json
+     */
     public function getOrderResponsesFromRegionSearch(OrderHandler $orderHandler, array $createdRequests) {
         $pool            = $orderHandler->processMultipleRequests($createdRequests);
         $promise         = $pool->promise();

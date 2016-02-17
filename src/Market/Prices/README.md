@@ -35,7 +35,7 @@ return [
 ];
 ```
 
-This class creates the following log: `eve_online_market_cached_prices.log` in `storage/logs` of youre laravel application.
+This class creates the following log: `eve_online_market_cached_prices.log` in `storage/logs` of your laravel application.
 
 ## Quick Use
 
