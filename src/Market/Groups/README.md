@@ -28,7 +28,7 @@ return [
 
         ...
 
-        EveOnline\Regions\MarketGroupsProvider::class,
+        EveOnline\Market\MarketGroupsProvider::class,
 
     ],
 
@@ -36,7 +36,7 @@ return [
 
         ...
 
-        'EveMarketGroups' => EveOnline\Regions\MarketGroupsFacade::class,
+        'EveMarketGroups' => EveOnline\Market\MarketGroupsFacade::class,
     ],
 ];
 ```
@@ -129,4 +129,4 @@ accepted responses to the container along with the groups to create a container 
 ]
 ```
 
-This is then passed to my service to then save the data to the database. But that step is entirely up to you. This whole process should be run as a background job at least once in the applications life time. 
+This is then passed to my service to then save the data to the database. But that step is entirely up to you. This whole process should be run as a background job at least once in the applications life time.
