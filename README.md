@@ -2,8 +2,8 @@
 
 [![Build Status](https://travis-ci.org/AdamKyle/EvePublicCrest.svg?branch=master)](https://travis-ci.org/AdamKyle/EvePublicCrest)
 [![Packagist](https://img.shields.io/packagist/v/evemarket/eve-market-details.svg?style=flat)](https://packagist.org/packages/evemarket/eve-market-details)
-[![GitHub license](https://img.shields.io/github/license/mashape/apistatus.svg)]()
-[![GitHub tag](https://img.shields.io/github/tag/strongloop/express.svg)]()
+[![GitHub tag](https://img.shields.io/github/tag/AdamKyle/EvePublicCrest.svg)]()
+[![GitHub license](https://img.shields.io/github/license/AdamKyle/EvePublicCrest.svg)]()
 
 Description
 
