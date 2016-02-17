@@ -38,18 +38,4 @@ class PricesTest extends \PHPUnit_Framework_TestCase {
 
         $this->assertTrue(property_exists($response, 'something'));
     }
-
-    public function testItemType() {
-        $client     = $this->fakeClient();
-        $logHandler = $this->getLogMock();
-
-        $logHandler->method('setUpStreamHandler')
-                   ->with('eve_online_item_type.log')
-                   ->willReturn(new StreamHandler('tmp/something.log', Logger::INFO));
-
-        $prices   = new Prices($client, $logHandler);
-        $response = $prices->ItemType('http://google.ca');
-
-        $this->assertTrue(property_exists($response, 'something'));
-    }
 }
