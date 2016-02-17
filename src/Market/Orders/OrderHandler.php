@@ -39,6 +39,8 @@ class OrderHandler {
     }
 
     public function processMultipleRequests(array $requests) {
+        $this->resetResponsesContainer();
+
         return new Pool($this->client, $requests, [
             'concurrency' => 18,
             'fulfilled'   => function ($response, $index) {
@@ -60,6 +62,11 @@ class OrderHandler {
 
     public function getCreatedRequests() {
         return $this->requests;
+    }
+
+    public function resetResponsesContainer() {
+        $this->acceptedResponsesJson = [];
+        $this->rejectedResponse      = [];
     }
 
     protected function resetContainers() {
