@@ -36,25 +36,6 @@ class GroupsTest extends \PHPUnit_Framework_TestCase {
         $this->assertTrue(property_exists($groups->fetchGroupPages(), 'types'));
     }
 
-    public function testShouldReturnFalseWhenWeGrabAllPagesOfGroups() {
-        $mock = new MockHandler([
-            new Response(302, [], json_encode(['pageCount' => 2, 'types' => 'example', 'next' => ['href' => 'http://google.ca']])),
-        ]);
-
-        $handler = HandlerStack::create($mock);
-        $client  = new Client(['handler' => $handler]);
-
-        $logMock = $this->getLogMock();
-
-        $logMock->method('setUpStreamHandler')
-                ->with('eve_online_market_groups.log')
-                ->willReturn(new StreamHandler('tmp/something.log', Logger::INFO));
-
-        $groups  = new MarketGroups($client, $logMock);
-
-        $this->assertFalse($groups->fetchGroupPages());
-    }
-
     public function testShouldRunThePooledRequests(){
         $mock = new MockHandler([
             new Response(200, [], json_encode(['pageCount' => 1, 'types' => 'example'])),
