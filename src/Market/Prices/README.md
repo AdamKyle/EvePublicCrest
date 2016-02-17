@@ -35,6 +35,8 @@ return [
 ];
 ```
 
+This class creates the following log: `eve_online_market_cached_prices.log` in `storage/logs` of youre laravel application.
+
 ## Quick Use
 
 To get started all you have to do to get a list of all prices is:
