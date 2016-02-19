@@ -44,6 +44,10 @@ Super simple:
 
 ```php
 EveItemDetails::details('https://public-crest.eveonline.com/types/32772/');
-
-// Returns you the json for this link.
 ```
+
+You can see the JSON (which we decode for you) for this particular example link [here](https://public-crest.eveonline.com/types/32772/);
+
+This link can be fetched by you using the [Eve Online Market Types Facade](https://github.com/AdamKyle/EvePublicCrest/blob/master/src/Market/Types/README.md)
+
+We suggest you store the information you fetch in a database of some sort.

@@ -47,4 +47,14 @@ This class generates the following log: `eve_online_market_types.log` Which is t
 
 ## Quick Use
 
-The easiest way in Laravel to use this class is: `EveMarketTypes::fetchTypes();`
+The easiest way in Laravel to use this class is:
+
+```php
+EveMarketTypes::fetchTypes();
+```
+
+The following will return all current pages of all item types as an iterator that was turned into an array of responses.
+
+For example if you visit: [https://public-crest.eveonline.com/market/types/](https://public-crest.eveonline.com/market/types/) you will see that there are x pages. Each page is stored in an array as a decoded json object.
+
+We suggest you store the `items[x]->types->href` in the database in order to use with [Eve Online Item Details](https://github.com/AdamKyle/EvePublicCrest/blob/master/src/Items/README.md).

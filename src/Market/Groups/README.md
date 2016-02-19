@@ -57,6 +57,7 @@ First of all lets get the group information:
 
 ```php
 $groups = EveMarketGroups::fetchGroupPages();
+// We use: https://public-crest.eveonline.com/market/groups/ to get the groups.
 
 $groupChunks = array_chunk($groups->items, 100);
 
@@ -110,11 +111,24 @@ class FetchEveOnlineMarketGroupsInformation extends Job implements ShouldQueue
     public function handle()
     {
         $groupsRequest     = EveMarketGroups::createRequestsForGroups($this->groups);
+
+        // Each of the groups in: https://public-crest.eveonline.com/market/groups/ contains a type->href.
+        // We use this to create the various Requests.
+
         $groupsInformation = EveMarketGroups::fetchGroupsInfromation();
         $acceptedResponses = EveMarketGroups::getAcceptedResponses();
+
+        // Accepted responses are an array of:
+        // [index => [[decodedJSONResponse], [decodedJSONResponse]]]
+
         $groupsContainer   = EveMarketGroups::getGroupInformationContainer($acceptedResponses, $this->groups);
 
+        // This will be an array of array where the key is the group name.
+        // ['groupName' => [[decodedJSONResponse], [decodedJSONResponse]]]
+
         $this->marketGroupService->storeGroupsInformation($groupsContainer);
+
+        // The above is a call to store the container above in a database.
     }
 }
 ```
@@ -125,8 +139,21 @@ accepted responses to the container along with the groups to create a container 
 
 ```php
 [
-  'groupName' => responseJsonForThatGroup
+  'groupName' => [[decodedJSONResponse], [decodedJSONResponse]]
 ]
 ```
 
 This is then passed to my service to then save the data to the database. But that step is entirely up to you. This whole process should be run as a background job at least once in the applications life time.
+
+## Storage Suggestions.
+
+If you have used [Eve Online Market Types](https://github.com/AdamKyle/EvePublicCrest/blob/master/src/Market/Types/README.md) then we suggest that you store the item id that belongs to this group instead of the item details that comes back with each group fetch.
+
+This allows your schema too look something like:
+
+```
+group_name
+item_type_id
+created_at
+updated_at
+```

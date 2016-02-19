@@ -43,6 +43,10 @@ This class generates the following log: `eve_online_regions.log` Which is then s
 
 ## Quick Use
 
-To fetch regions: `EveRegions::regions();`
+To fetch regions:
 
-This will return you back a set of regions, the json you can see [here](https://public-crest.eveonline.com/regions/)
+```php
+EveRegions::regions();
+```
+
+The above will return a decoded JSON object that you can then use and save to your database.[https://public-crest.eveonline.com/regions/](https://public-crest.eveonline.com/regions/)

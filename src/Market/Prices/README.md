@@ -45,4 +45,7 @@ To get started all you have to do to get a list of all prices is:
 EvePrices::prices();
 ```
 
-There is nothing fancy to it. This will return [the resulting JSON](https://public-crest.eveonline.com/market/prices/)
+We use the [following url to fetch prices](https://public-crest.eveonline.com/market/prices/) and you can see the JSON
+response for the request.
+
+There is nothing fancy to it. This will return [the resulting JSON](https://public-crest.eveonline.com/market/prices/) as a decoded json object.

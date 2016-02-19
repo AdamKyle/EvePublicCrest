@@ -2,3 +2,4 @@
 /coverage
 /tmp
 .DS_Store
+composer.lock

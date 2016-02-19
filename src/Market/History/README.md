@@ -94,7 +94,7 @@ class FetchEveOnlineItemHistory extends Job implements ShouldQueue
 This job is super simple. `$this->items` and `$this->regions` and nothing more then an array of item id's and region id's. We suggest chunking up the items, if there are more then 100, to 100 at a time. that generates a potential of 620
 records.
 
-> ### ATTN
+> ### ATTN!!!
 >
 > We know that some of the items might not have a region history at all, so if the data for that item in that region has
 > has a page count of 0, we will not add it to the historical data output.
@@ -107,6 +107,24 @@ EveItemHistory::createRequests($items, $regions);
 $fetchedItemHistory = EveItemHistory::getItemHistoryForRegion();
 $historicalData     = EveItemHistory::getHistoricalData();
 ```
+
+> ### Getting Region Id's and Item Id's
+>
+> This is where you will need to make us of two facades:
+> [Regions Facade](https://github.com/AdamKyle/EvePublicCrest/blob/master/src/Regions/README.md)
+> and [Eve Online Market Types](https://github.com/AdamKyle/EvePublicCrest/blob/master/src/Market/Types/README.md)
+> Both of these will get you the details you need.
+>
+> You will want to save the information to a database, the particular information you care about is the `type->id`
+> from the JSON resulting in visiting: [https://public-crest.eveonline.com/market/types/](https://public-crest.eveonline.com/market/types/) and the `id` from
+> each region when visiting the [https://public-crest.eveonline.com/regions/](https://public-crest.eveonline.com/regions/). This information is also
+> best saved to the database.
+>
+> ### URL used
+>
+> The url used to fetch data is: `'https://public-crest.eveonline.com/market/'.$region.'/types/'.$item.'/history/'`
+>
+> Where `$region` is the region id and `$item` is the item id.
 
 First we use that array of item and region ids to create a set of PSR7 Guzzle Requests.
 
@@ -124,4 +142,4 @@ This historical data will contain x number of arrays inside an array, each array
 ]
 ```
 
-The `responseJson` is a decoded json object.
+The `responseJson` is a decoded JSON object.
