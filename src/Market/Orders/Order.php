@@ -1,4 +1,4 @@
-Ad<?php
+<?php
 
 namespace EveOnline\Market\Orders;
 
