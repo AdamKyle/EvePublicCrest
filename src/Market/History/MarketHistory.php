@@ -77,6 +77,8 @@ class MarketHistory {
 
         $promise = $pool->promise();
         $promise->wait();
+
+        $this->populateHistoricalDataContainer();
     }
 
     /**
@@ -98,10 +100,9 @@ class MarketHistory {
                 $streamHandler = $this->eveLogHandler->setUpStreamHandler('eve_online_region_item_history_responses.log');
                 $this->eveLogHandler->responseLog($response, $streamHandler);
 
-                $responseJson                    = json_decode($response->getBody()->getContents());
-                $this->acceptedResponses[$index] = $responseJson;
+                $responseJson = json_decode($response->getBody()->getContents());
 
-                $this->populateHistoricalDataContainer($responseJson, $index);
+                $this->populatedAcceptedResponse($responseJson, $index);
             },
             'rejected'    => function ($reason, $index)  {
                 $streamHandler = $this->eveLogHandler->setUpStreamHandler('eve_online_region_item_history_responses.log');
@@ -110,14 +111,16 @@ class MarketHistory {
         ];
     }
 
-    protected function populateHistoricalDataContainer($responseJson, $index) {
+    protected function populateHistoricalDataContainer() {
+        $historyDetails = new MarketHistoryDetails($this->acceptedResponses, $this->regionAndItemPairs);
+        $historyDetails->createHistoryDetails();
+
+        array_push($this->historicalData, $historyDetails->getHistoryDetails());
+    }
+
+    protected function populatedAcceptedResponse($responseJson, $index) {
         if ($responseJson->pageCount !== 0) {
             $this->acceptedResponses[$index] = $responseJson;
-
-            $historyDetails = new MarketHistoryDetails($this->acceptedResponses, $this->regionAndItemPairs);
-            $historyDetails->createHistoryDetails();
-
-            array_push($this->historicalData, $historyDetails->getHistoryDetails());
         }
     }
 }
