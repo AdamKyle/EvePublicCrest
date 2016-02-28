@@ -89,7 +89,7 @@ class MarketHistory {
      * @return array of arrays.
      */
     public function getHistoricalData() {
-        return end($this->historicalData);
+        return $this->historicalData;
     }
 
     protected function getOptions() {
@@ -115,7 +115,7 @@ class MarketHistory {
         $historyDetails = new MarketHistoryDetails($this->acceptedResponses, $this->regionAndItemPairs);
         $historyDetails->createHistoryDetails();
 
-        array_push($this->historicalData, $historyDetails->getHistoryDetails());
+        $this->historicalData = $historyDetails->getHistoryDetails();
     }
 
     protected function populatedAcceptedResponse($responseJson, $index) {
