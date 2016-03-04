@@ -70,10 +70,16 @@ class MarketHistory {
 
     /**
      * Get the item history for the a region.
+     *
+     * You can specificy the response json items to come back. This means
+     * that you can say something like -20, this will give you the last 20
+     * items of the array of response->items.
+     *
+     * @param $howManyItemsBack How many items should we get back?
      */
-    public function getItemHistoryForRegion() {
+    public function getItemHistoryForRegion($howManyItemsBack) {
 
-        $pool = new Pool($this->client, $this->createdRequests, $this->getOptions());
+        $pool = new Pool($this->client, $this->createdRequests, $this->getOptions($howManyItemsBack));
 
         $promise = $pool->promise();
         $promise->wait();
@@ -92,16 +98,16 @@ class MarketHistory {
         return $this->historicalData;
     }
 
-    protected function getOptions() {
+    protected function getOptions($howManyItemsBack) {
         return [
             'concurrency' => 18,
-            'fulfilled'   => function ($response, $index) {
+            'fulfilled'   => function ($response, $index) use (&$howManyItemsBack) {
 
                 $streamHandler = $this->eveLogHandler->setUpStreamHandler('eve_online_region_item_history_responses.log');
                 $this->eveLogHandler->responseLog($response, $streamHandler);
 
                 $responseJson         = json_decode($response->getBody()->getContents());
-                $responseJson->items  = array_slice($responseJson->items, -20);
+                $responseJson->items  = array_slice($responseJson->items, $howManyItemsBack);
 
                 $this->populatedAcceptedResponse($responseJson, $index);
             },
