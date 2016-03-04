@@ -54,7 +54,7 @@ class MarketHistoryTest extends \PHPUnit_Framework_TestCase {
     public function testShouldTestTheWholeProcess() {
 
         $mock = new MockHandler([
-            new Response(200, [], json_encode(['pageCount' => 1, 'types' => 'example'])),
+            new Response(200, [], json_encode(['pageCount' => 1, 'types' => 'example', 'items' => [1, 2,3,4,5,6,7,8,9,0,1,2,3,4,5,6,7,8,9,0]])),
         ]);
 
         $handler = HandlerStack::create($mock);

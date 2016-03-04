@@ -100,7 +100,8 @@ class MarketHistory {
                 $streamHandler = $this->eveLogHandler->setUpStreamHandler('eve_online_region_item_history_responses.log');
                 $this->eveLogHandler->responseLog($response, $streamHandler);
 
-                $responseJson = json_decode($response->getBody()->getContents());
+                $responseJson         = json_decode($response->getBody()->getContents());
+                $responseJson->items  = array_slice($responseJson->items, -20);
 
                 $this->populatedAcceptedResponse($responseJson, $index);
             },
