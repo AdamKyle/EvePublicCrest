@@ -62,7 +62,7 @@ class MarketHistory {
     public function createRequests(array $items, array $regions) {
         foreach($items as $item) {
             foreach ($regions as $region) {
-                array_push($this->regionAndItemPairs, [$item, $region]);
+                array_push($this->regionAndItemPairs, [$region, $item]);
                 array_push($this->createdRequests, new Request('GET', 'https://public-crest.eveonline.com/market/'.$region.'/types/'.$item.'/history/'));
             }
         }
@@ -75,16 +75,23 @@ class MarketHistory {
      * that you can say something like -20, this will give you the last 20
      * items of the array of response->items.
      *
+     * The second argument is a callback that takes the following paramters:
+     *
+     * - array regionItemPairs, example: [0, 1] where 0 is the region id and 1 is the item id.
+     * - json object responseJson which is the response json from the promise.
+     *
+     * This call back function can then be used to do what ever you wish with the data backing back.
+     * the region and item pairs map to the response json in question.
+     *
      * @param $howManyItemsBack How many items should we get back?
+     * @param $callBackFunction the function which takes an array of region id and item id and a responseJson object.
      */
-    public function getItemHistoryForRegion($howManyItemsBack) {
+    public function getItemHistoryForRegion($howManyItemsBack, $callBackFunction) {
 
-        $pool = new Pool($this->client, $this->createdRequests, $this->getOptions($howManyItemsBack));
+        $pool = new Pool($this->client, $this->createdRequests, $this->getOptions($howManyItemsBack, $callBackFunction));
 
         $promise = $pool->promise();
         $promise->wait();
-
-        $this->populateHistoricalDataContainer();
     }
 
     /**
@@ -98,10 +105,10 @@ class MarketHistory {
         return $this->historicalData;
     }
 
-    protected function getOptions($howManyItemsBack) {
+    protected function getOptions($howManyItemsBack, $callBackFunction) {
         return [
             'concurrency' => 18,
-            'fulfilled'   => function ($response, $index) use (&$howManyItemsBack) {
+            'fulfilled'   => function ($response, $index) use (&$howManyItemsBack, &$callBackFunction) {
 
                 $streamHandler = $this->eveLogHandler->setUpStreamHandler('eve_online_region_item_history_responses.log');
                 $this->eveLogHandler->responseLog($response, $streamHandler);
@@ -109,25 +116,12 @@ class MarketHistory {
                 $responseJson         = json_decode($response->getBody()->getContents());
                 $responseJson->items  = array_slice($responseJson->items, $howManyItemsBack);
 
-                $this->populatedAcceptedResponse($responseJson, $index);
+                call_user_func_array($callBackFunction, array($this->regionAndItemPairs, $responseJson));
             },
             'rejected'    => function ($reason, $index)  {
                 $streamHandler = $this->eveLogHandler->setUpStreamHandler('eve_online_region_item_history_responses.log');
                 $this->eveLogHandler->messageLog($reason, $streamHandler);
             },
         ];
-    }
-
-    protected function populateHistoricalDataContainer() {
-        $historyDetails = new MarketHistoryDetails($this->acceptedResponses, $this->regionAndItemPairs);
-        $historyDetails->createHistoryDetails();
-
-        $this->historicalData = $historyDetails->getHistoryDetails();
-    }
-
-    protected function populatedAcceptedResponse($responseJson, $index) {
-        if ($responseJson->pageCount !== 0) {
-            $this->acceptedResponses[$index] = $responseJson;
-        }
     }
 }

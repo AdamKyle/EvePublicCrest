@@ -43,10 +43,14 @@ class MarketHistoryTest extends \PHPUnit_Framework_TestCase {
 
         $historyMock->expects($this->once())
                     ->method('getOptions')
+                    ->with(-20, function($regionAndItemPairs, $responseJson){})
                     ->willReturn(['options' => ['headers' => ['x-foo' => 'bar']]]);
 
         $historyMock->createRequests([1, 2, 3, 4, 5], [1, 2, 3, 4, 5]);
-        $historyMock->getItemHistoryForRegion(-20);
+        $historyMock->getItemHistoryForRegion(-20, function($regionAndItemPairs, $responseJson) {
+            $this->assertNotEmpty($responseJson->items);
+            $this->assertNotEmpty($regionAndItemPairs);
+        });
     }
 
     public function testShouldTestTheWholeProcess() {
@@ -67,8 +71,9 @@ class MarketHistoryTest extends \PHPUnit_Framework_TestCase {
                 ->with('eve_online_region_item_history_responses.log')
                 ->willReturn(new StreamHandler('tmp/something.log', Logger::INFO));
 
-        $marketHistory->getItemHistoryForRegion(-20);
-
-        $this->assertNotEmpty($marketHistory->getHistoricalData());
+        $marketHistory->getItemHistoryForRegion(-20, function($regionAndItemPairs, $responseJson) {
+            $this->assertNotEmpty($responseJson->items);
+            $this->assertNotEmpty($regionAndItemPairs);
+        });
     }
 }
