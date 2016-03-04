@@ -104,9 +104,13 @@ So in the service what do we call to get the data? Assuming we are only doing 10
 ```php
 EveItemHistory::createRequests($items, $regions);
 
-$fetchedItemHistory = EveItemHistory::getItemHistoryForRegion();
+$fetchedItemHistory = EveItemHistory::getItemHistoryForRegion(-20);
 $historicalData     = EveItemHistory::getHistoricalData();
 ```
+
+We can see that we pass -20 to the `getItemHistoryForRegion`. This means that when we get the response of historical information, we go through the items property which is an array and return the last 20 (`array_slice`).
+
+The Eve Api does not allow us to query it on its own, it only allows us to fetch the data and we have to query it our selves.
 
 > ### Getting Region Id's and Item Id's
 >
@@ -125,6 +129,7 @@ $historicalData     = EveItemHistory::getHistoricalData();
 > The url used to fetch data is: `'https://public-crest.eveonline.com/market/'.$region.'/types/'.$item.'/history/'`
 >
 > Where `$region` is the region id and `$item` is the item id.
+>
 
 First we use that array of item and region ids to create a set of PSR7 Guzzle Requests.
 
