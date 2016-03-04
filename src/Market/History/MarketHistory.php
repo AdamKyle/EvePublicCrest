@@ -116,7 +116,7 @@ class MarketHistory {
                 $responseJson         = json_decode($response->getBody()->getContents());
                 $responseJson->items  = array_slice($responseJson->items, $howManyItemsBack);
 
-                call_user_func_array($callBackFunction, array($this->regionAndItemPairs, $responseJson));
+                call_user_func_array($callBackFunction, array($this->regionAndItemPairs[$index], $responseJson));
             },
             'rejected'    => function ($reason, $index)  {
                 $streamHandler = $this->eveLogHandler->setUpStreamHandler('eve_online_region_item_history_responses.log');
