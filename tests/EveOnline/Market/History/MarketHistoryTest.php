@@ -68,7 +68,7 @@ class MarketHistoryTest extends \PHPUnit_Framework_TestCase {
         $marketHistory->createRequests([1, 2, 3, 4, 5], [1, 2, 3, 4, 5]);
 
         $logMock->method('setUpStreamHandler')
-                ->with('eve_online_region_item_history_responses.log')
+                ->with('eve_online_region_item_history_rejected_responses.log')
                 ->willReturn(new StreamHandler('tmp/something.log', Logger::INFO));
 
         $marketHistory->getItemHistoryForRegion(-20, function($regionAndItemPairs, $responseJson) {

@@ -110,16 +110,13 @@ class MarketHistory {
             'concurrency' => 18,
             'fulfilled'   => function ($response, $index) use (&$howManyItemsBack, &$callBackFunction) {
 
-                $streamHandler = $this->eveLogHandler->setUpStreamHandler('eve_online_region_item_history_responses.log');
-                $this->eveLogHandler->responseLog($response, $streamHandler);
-
                 $responseJson         = json_decode($response->getBody()->getContents());
                 $responseJson->items  = array_slice($responseJson->items, $howManyItemsBack);
 
                 call_user_func_array($callBackFunction, array($this->regionAndItemPairs[$index], $responseJson));
             },
             'rejected'    => function ($reason, $index)  {
-                $streamHandler = $this->eveLogHandler->setUpStreamHandler('eve_online_region_item_history_responses.log');
+                $streamHandler = $this->eveLogHandler->setUpStreamHandler('eve_online_region_item_history_rejected_responses.log');
                 $this->eveLogHandler->messageLog($reason, $streamHandler);
             },
         ];

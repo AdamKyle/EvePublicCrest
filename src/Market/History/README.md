@@ -36,7 +36,11 @@ return [
 
 This class generates the following logs, all of which are stored in `storage/logs`:
 
-- `eve_online_region_item_history_responses.log`
+- `eve_online_region_item_history_rejected_responses.log`
+
+> ### ATTN!
+>
+> We do not log successful responses because this can generate a file in the gigabytes.
 
 ## Usage
 
