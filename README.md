@@ -5,6 +5,10 @@
 [![Maintenance](https://img.shields.io/maintenance/yes/2016.svg)]()
 [![Made With Love](https://img.shields.io/badge/Made%20With-Love-green.svg)]()
 
+**Note**: Never trust the packagist icon badge. Version: 0.15.0
+
+`composer require evemarket/eve-market-details`
+
 Eve Online Public Crest is a library that allows you to fetch Market Details and Historical Details. We allow access to
 things like Regions, Orders, Market Prices, Historical Data, Market Groups, Item Types and much more.
 
