@@ -3,7 +3,6 @@
 namespace EveOnline\Items;
 
 use GuzzleHttp\Client;
-use EveOnline\Logging\EveLogHandler;
 use GuzzleHttp\Exception\ServerException;
 
 /**
@@ -16,18 +15,8 @@ class Details {
      */
     private $client;
 
-    /**
-     * Custom Eve Log Handler.
-     *
-     * @see EveOnline\Logging\EveLogHandler
-     */
-    private $eveLogHandler;
-
-
-    public function __construct(Client $client, EveLogHandler $eveLogHandler) {
-        $this->client        = $client;
-        $this->eveLogHandler = $eveLogHandler;
-        $this->streamHandler = $this->eveLogHandler->setUpStreamHandler('eveonline_item_details.log');
+    public function __construct(Client $client) {
+        $this->client = $client;
     }
 
     /**
@@ -36,15 +25,12 @@ class Details {
      * Example url: https://public-crest.eveonline.com/types/32772/
      *
      * @param string url - example: https://public-crest.eveonline.com/types/32772/
-     * @return decoded json
+     * @param function callback - Response call back that takes an argument of GuzzleHttp\Psr7\Response $response
+     * @return callback function with the response injected.
      */
-    public function details($href) {
+    public function details($href, $responseCallBack) {
 
         $response = $this->client->request('GET', $href);
-
-        $this->eveLogHandler->responseLog($response, $this->streamHandler);
-
-        return json_decode($response->getBody()->getContents());
-
+        return call_user_func_array($responseCallBack, array($response));
     }
 }

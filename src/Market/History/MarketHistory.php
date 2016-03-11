@@ -5,10 +5,6 @@ namespace EveOnline\Market\History;
 use GuzzleHttp\Client;
 use GuzzleHttp\Pool;
 use GuzzleHttp\Psr7\Request;
-use Log;
-use Monolog\Handler\StreamHandler;
-use Monolog\Logger;
-use EveOnline\Logging\EveLogHandler;
 use \Carbon\Carbon;
 
 class MarketHistory {
@@ -17,13 +13,6 @@ class MarketHistory {
      * Guzzle Client.
      */
     private $client;
-
-    /**
-     * Custom Eve Log Handler.
-     *
-     * @see EveOnline\Logging\EveLogHandler
-     */
-    private $eveLogHandler;
 
     /**
      * A set of Guzzle Requests.
@@ -45,9 +34,8 @@ class MarketHistory {
      */
     private $regionAndItemPairs = [];
 
-    public function __construct(Client $client, EveLogHandler $eveLogHandler) {
-        $this->client        = $client;
-        $this->eveLogHandler = $eveLogHandler;
+    public function __construct(Client $client) {
+        $this->client = $client;
     }
 
     /**
@@ -84,11 +72,12 @@ class MarketHistory {
      * the region and item pairs map to the response json in question.
      *
      * @param $howManyItemsBack How many items should we get back?
-     * @param $callBackFunction the function which takes an array of region id and item id and a responseJson object.
+     * @param $successCallbackFunction the function which takes an array of region id and item id and a responseJson object.
+     * @param $rejectedCallbackFunction the function to handle rejected response. $reason and $index are injected into the function.
      */
-    public function getItemHistoryForRegion($howManyItemsBack, $callBackFunction) {
+    public function getItemHistoryForRegion($howManyItemsBack, $successCallbackFunction, $rejectedCallbackFunction) {
 
-        $pool = new Pool($this->client, $this->createdRequests, $this->getOptions($howManyItemsBack, $callBackFunction));
+        $pool = new Pool($this->client, $this->createdRequests, $this->getOptions($howManyItemsBack, $successCallbackFunction, $rejectedCallbackFunction));
 
         $promise = $pool->promise();
         $promise->wait();
@@ -105,19 +94,18 @@ class MarketHistory {
         return $this->historicalData;
     }
 
-    protected function getOptions($howManyItemsBack, $callBackFunction) {
+    protected function getOptions($howManyItemsBack, $successCallbackFunction, $rejectedCallbackFunction) {
         return [
             'concurrency' => 18,
-            'fulfilled'   => function ($response, $index) use (&$howManyItemsBack, &$callBackFunction) {
+            'fulfilled'   => function ($response, $index) use (&$howManyItemsBack, &$successCallbackFunction) {
 
                 $responseJson         = json_decode($response->getBody()->getContents());
                 $responseJson->items  = array_slice($responseJson->items, $howManyItemsBack);
 
-                call_user_func_array($callBackFunction, array($this->regionAndItemPairs[$index], $responseJson));
+                call_user_func_array($successCallbackFunction, array($this->regionAndItemPairs[$index], $responseJson));
             },
-            'rejected'    => function ($reason, $index)  {
-                $streamHandler = $this->eveLogHandler->setUpStreamHandler('eve_online_region_item_history_rejected_responses.log');
-                $this->eveLogHandler->messageLog($reason, $streamHandler);
+            'rejected'    => function ($reason, $index) use (&$rejectedCallbackFunction)  {
+                call_user_func_array($rejectedCallbackFunction, array($reason, $index));
             },
         ];
     }

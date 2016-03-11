@@ -6,15 +6,8 @@ use GuzzleHttp\HandlerStack;
 use GuzzleHttp\Psr7\Response;
 use GuzzleHttp\Psr7\Request;
 use EveOnline\Market\Types\Types;
-use Monolog\Handler\StreamHandler;
-use Monolog\Logger;
 
 class TypesTest extends \PHPUnit_Framework_TestCase {
-
-    public function getLogMock() {
-        return $this->getMockBuilder('EveOnline\Logging\EveLogHandler')
-                    ->getMock();
-    }
 
     public function fakeClient() {
         $mock = new MockHandler([
@@ -35,28 +28,17 @@ class TypesTest extends \PHPUnit_Framework_TestCase {
     }
 
     public function testGetTypes() {
-        $client     = $this->fakeClient();
-        $logHandler = $this->getLogMock();
-
-        $logHandler->method('setUpStreamHandler')
-                   ->with('eve_online_market_types.log')
-                   ->willReturn(new StreamHandler('tmp/something.log', Logger::INFO));
-
-        $types    = new Types($client, $logHandler);
+        $client   = $this->fakeClient();
+        $types    = new Types($client);
         $response = $types->fetchTypes();
 
         $this->assertNotEmpty($response);
     }
 
     public function testThatMorePagesAreReturned() {
-        $client     = $this->fakeClient();
-        $logHandler = $this->getLogMock();
+        $client = $this->fakeClient();
+        $types  = new Types($client);
 
-        $logHandler->method('setUpStreamHandler')
-                   ->with('eve_online_market_types.log')
-                   ->willReturn(new StreamHandler('tmp/something.log', Logger::INFO));
-
-        $types     = new Types($client, $logHandler);
         $morePages = $this->invokeMethod($types, 'getOtherPages', array(json_decode(json_encode(
             ['next' => ['href' => 'http://google.ca']]
         ))));

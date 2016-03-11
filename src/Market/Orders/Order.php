@@ -7,8 +7,6 @@ use Illuminate\Database\Eloquent\Collection;
 use GuzzleHttp\Client;
 use GuzzleHttp\Psr7\Request;
 
-use EveOnline\Logging\EveLogHandler;
-
 /**
  * Fetches all Buy/Sell orders or a region or all regions.
  */
@@ -19,16 +17,8 @@ class Order {
      */
     private $client;
 
-    /**
-     * Custom Eve Log Handler.
-     *
-     * @see EveOnline\Logging\EveLogHandler
-     */
-    private $eveLogHandler;
-
-    public function __construct(Client $client, EveLogHandler $eveLogHandler) {
+    public function __construct(Client $client) {
         $this->client        = $client;
-        $this->eveLogHandler = $eveLogHandler;
     }
 
     /**
@@ -133,21 +123,13 @@ class Order {
     }
 
     protected function getRegionDetails($regionHref) {
-
-        $response      = $this->client->request('GET', $regionHref);
-        $streamHandler = $this->eveLogHandler->setUpStreamHandler('eve_online_region_details.log');
-
-        $this->eveLogHandler->responseLog($response, $streamHandler);
-
+        $response = $this->client->request('GET', $regionHref);
+        
         return json_decode($response->getBody()->getContents());
     }
 
     protected function getBuyOrders($regionBuyLink, $itemTypeHref) {
-
-        $response      = $this->client->request('GET', $regionBuyLink . '?type=' . $itemTypeHref);
-        $streamHandler = $this->eveLogHandler->setUpStreamHandler('eve_online_buy_orders.log');
-
-        $this->eveLogHandler->responseLog($response, $streamHandler);
+        $response = $this->client->request('GET', $regionBuyLink . '?type=' . $itemTypeHref);
 
         return json_decode($response->getBody()->getContents());
     }
@@ -161,9 +143,6 @@ class Order {
             } else {
                 array_push($requestsForPool, new Request('GET', $response->marketSellOrders->href . '?type=' . $itemTypeHref));
             }
-
-            $streamHandler = $this->eveLogHandler->setUpStreamHandler('eve_online_region_details.log');
-            $this->eveLogHandler->messageLog($response, $streamHandler);
         }
 
         return $requestsForPool;

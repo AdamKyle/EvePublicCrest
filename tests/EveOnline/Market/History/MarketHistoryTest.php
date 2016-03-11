@@ -5,24 +5,16 @@ use GuzzleHttp\Handler\MockHandler;
 use GuzzleHttp\HandlerStack;
 use GuzzleHttp\Psr7\Response;
 use GuzzleHttp\Psr7\Request;
-use EveOnline\Logging\EveLogHandler;
-use EveOnline\Market\History\MarketHistory;
 
-use Monolog\Handler\StreamHandler;
-use Monolog\Logger;
+use EveOnline\Market\History\MarketHistory;
 
 class MarketHistoryTest extends \PHPUnit_Framework_TestCase {
 
-    public function getLogMock() {
-        return $this->getMockBuilder('EveOnline\Logging\EveLogHandler')
-                    ->getMock();
-    }
-
-    public function getPartialHistoryClassMock(Client $client, EveLogHandler $eveLogHandlerMock) {
+    public function getPartialHistoryClassMock(Client $client) {
         return $this->getMock(
             'EveOnline\Market\History\MarketHistory',
             ['getOptions'],
-            [$client, $eveLogHandlerMock]
+            [$client]
         );
     }
 
@@ -36,10 +28,8 @@ class MarketHistoryTest extends \PHPUnit_Framework_TestCase {
             }
         ]);
 
-        $client  = new Client(['handler' => $handler]);
-        $logMock = $this->getLogMock();
-
-        $historyMock = $this->getPartialHistoryClassMock($client, $logMock);
+        $client      = new Client(['handler' => $handler]);
+        $historyMock = $this->getPartialHistoryClassMock($client);
 
         $historyMock->expects($this->once())
                     ->method('getOptions')
@@ -50,7 +40,7 @@ class MarketHistoryTest extends \PHPUnit_Framework_TestCase {
         $historyMock->getItemHistoryForRegion(-20, function($regionAndItemPairs, $responseJson) {
             $this->assertNotEmpty($responseJson->items);
             $this->assertNotEmpty($regionAndItemPairs);
-        });
+        }, function($reason, $index) { /* Do something with the reason it failed here ... */ });
     }
 
     public function testShouldTestTheWholeProcess() {
@@ -59,21 +49,15 @@ class MarketHistoryTest extends \PHPUnit_Framework_TestCase {
             new Response(200, [], json_encode(['pageCount' => 1, 'types' => 'example', 'items' => [1, 2,3,4,5,6,7,8,9,0,1,2,3,4,5,6,7,8,9,0]])),
         ]);
 
-        $handler = HandlerStack::create($mock);
+        $handler       = HandlerStack::create($mock);
+        $client        = new Client(['handler' => $handler]);
+        $marketHistory = new MarketHistory($client);
 
-        $client  = new Client(['handler' => $handler]);
-        $logMock = $this->getLogMock();
-
-        $marketHistory = new MarketHistory($client, $logMock);
         $marketHistory->createRequests([1, 2, 3, 4, 5], [1, 2, 3, 4, 5]);
-
-        $logMock->method('setUpStreamHandler')
-                ->with('eve_online_region_item_history_rejected_responses.log')
-                ->willReturn(new StreamHandler('tmp/something.log', Logger::INFO));
 
         $marketHistory->getItemHistoryForRegion(-20, function($regionAndItemPairs, $responseJson) {
             $this->assertNotEmpty($responseJson->items);
             $this->assertNotEmpty($regionAndItemPairs);
-        });
+        }, function($reason, $index) { /* Do something with the reason it failed here ... */ });
     }
 }

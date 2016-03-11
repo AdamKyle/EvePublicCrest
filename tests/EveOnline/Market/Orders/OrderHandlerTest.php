@@ -5,11 +5,8 @@ use GuzzleHttp\Handler\MockHandler;
 use GuzzleHttp\HandlerStack;
 use GuzzleHttp\Psr7\Response;
 use GuzzleHttp\Psr7\Request;
-use EveOnline\Logging\EveLogHandler;
-use EveOnline\Market\Orders\OrderHandler;
 
-use Monolog\Handler\StreamHandler;
-use Monolog\Logger;
+use EveOnline\Market\Orders\OrderHandler;
 
 class OrderHandlerTest extends \PHPUnit_Framework_TestCase {
 

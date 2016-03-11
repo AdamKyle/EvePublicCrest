@@ -6,14 +6,8 @@ use GuzzleHttp\HandlerStack;
 use GuzzleHttp\Psr7\Response;
 use GuzzleHttp\Psr7\Request;
 use EveOnline\Regions\Regions;
-use Monolog\Handler\StreamHandler;
-use Monolog\Logger;
 
 class RegionsTest extends \PHPUnit_Framework_TestCase {
-    public function getLogMock() {
-        return $this->getMockBuilder('EveOnline\Logging\EveLogHandler')
-                    ->getMock();
-    }
 
     public function fakeClient() {
         $mock = new MockHandler([
@@ -25,16 +19,14 @@ class RegionsTest extends \PHPUnit_Framework_TestCase {
     }
 
     public function testGetRegions() {
-        $client     = $this->fakeClient();
-        $logHandler = $this->getLogMock();
+        $client   = $this->fakeClient();
+        $regions  = new Regions($client);
 
-        $logHandler->method('setUpStreamHandler')
-                   ->with('eve_online_regions.log')
-                   ->willReturn(new StreamHandler('tmp/something.log', Logger::INFO));
+        $regions->regions(function($response) {
+            $this->assertInstanceOf(Response::class, $response);
 
-        $regions  = new Regions($client, $logHandler);
-        $response = $regions->regions();
-
-        $this->assertTrue(property_exists($response, 'something'));
+            $json = json_decode($response->getBody()->getContents());
+            $this->assertTrue(property_exists($json, 'something'));
+        });
     }
 }

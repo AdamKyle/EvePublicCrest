@@ -6,8 +6,6 @@ use GuzzleHttp\Client;
 use GuzzleHttp\Pool;
 use GuzzleHttp\Psr7\Request;
 
-use EveOnline\Logging\EveLogHandler;
-
 /**
  * Fetches Eve Online Market Groups
  *
@@ -28,13 +26,6 @@ class MarketGroups {
      * Guzzle Client.
      */
     private $client;
-
-    /**
-     * Custom Eve Log Handler.
-     *
-     * @see EveOnline\Logging\EveLogHandler
-     */
-    private $eveLogHandler;
 
     /**
      * Contains a particular groups set of items.
@@ -58,23 +49,20 @@ class MarketGroups {
      */
     private $rejectedResponses         = [];
 
-    public function __construct(Client $client, EveLogHandler $eveLogHandler) {
+    public function __construct(Client $client) {
         $this->client        = $client;
-        $this->eveLogHandler = $eveLogHandler;
     }
 
     /**
-     * Fetches All the groups.
+     * Fetches All the groups and there associated pages.
      *
+     * @param function callback - Response call back that takes an argument of GuzzleHttp\Psr7\Response $response
      * @return decoded JSON of https://public-crest.eveonline.com/market/groups/
      */
-    public function fetchGroupPages() {
+    public function fetchGroupPages($callbackFunction) {
         $response = $this->client->request('GET', 'https://public-crest.eveonline.com/market/groups/');
 
-        $streamHandler = $this->eveLogHandler->setUpStreamHandler('eve_online_market_groups.log');
-        $this->eveLogHandler->responseLog($response, $streamHandler);
-
-        return json_decode($response->getBody()->getContents());
+        return call_user_func_array($callbackFunction, array($response));
     }
 
     /**
@@ -94,22 +82,20 @@ class MarketGroups {
      * Processes with a concurrency of 18, since Eve limits to 20.
      *
      * Uses a promise and will wait until finished.
+     *
+     * @param callback function - used for rejected responses. $reason and $index are injected.
      */
-    public function fetchGroupsInfromation() {
+    public function fetchGroupsInfromation($rejectedCallbackFunction) {
 
         $pool = new Pool($this->client, $this->createdRequests, [
             'concurrency' => 18,
             'fulfilled'   => function ($response, $index) {
-                $streamHandler = $this->eveLogHandler->setUpStreamHandler('eve_online_group_items_responses.log');
-                $this->eveLogHandler->responseLog($response, $streamHandler);
-
                 $responseJson                    = json_decode($response->getBody()->getContents());
-                $groupPagesIterator              = new MarketGroupsPagesIterator($responseJson, $this->client, $this->eveLogHandler);
+                $groupPagesIterator              = new MarketGroupsPagesIterator($responseJson, $this->client);
                 $this->acceptedResponses[$index] = iterator_to_array($groupPagesIterator->getAllPages());
             },
-            'rejected'    => function ($reason, $index)  {
-                $streamHandler = $this->eveLogHandler->setUpStreamHandler('eve_online_group_items_response_failures.log');
-                $this->eveLogHandler->responseLog($reason, $streamHandler);
+            'rejected'    => function ($reason, $index) use (&$rejectedCallbackFunction)  {
+                call_user_func_array($rejectedCallbackFunction, array($reason, $index));
             },
         ]);
 
@@ -120,7 +106,8 @@ class MarketGroups {
     /**
      * Returns an array of accepted responses.
      *
-     * @return GuzzleHttp\Psr7\Response
+     * @return array of page responses. Each set of responses can
+     * be an array on to its self.
      */
     public function getAcceptedResponses() {
         return $this->acceptedResponses;

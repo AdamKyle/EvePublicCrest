@@ -7,15 +7,7 @@ use GuzzleHttp\Psr7\Response;
 use GuzzleHttp\Psr7\Request;
 use EveOnline\Market\Groups\MarketGroups;
 
-use Monolog\Handler\StreamHandler;
-use Monolog\Logger;
-
 class GroupsTest extends \PHPUnit_Framework_TestCase {
-
-    public function getLogMock() {
-        return $this->getMockBuilder('EveOnline\Logging\EveLogHandler')
-                    ->getMock();
-    }
 
     public function testShouldGrabAllPagesOfGroups() {
         $mock = new MockHandler([
@@ -25,15 +17,14 @@ class GroupsTest extends \PHPUnit_Framework_TestCase {
         $handler = HandlerStack::create($mock);
         $client  = new Client(['handler' => $handler]);
 
-        $logMock = $this->getLogMock();
+        $groups  = new MarketGroups($client);
 
-        $logMock->method('setUpStreamHandler')
-                ->with('eve_online_market_groups.log')
-                ->willReturn(new StreamHandler('tmp/something.log', Logger::INFO));
+        $groups->fetchGroupPages(function($response){
+            $this->assertInstanceOf(Response::class, $response);
 
-        $groups  = new MarketGroups($client, $logMock);
-
-        $this->assertTrue(property_exists($groups->fetchGroupPages(), 'types'));
+            $json = json_decode($response->getBody()->getContents());
+            $this->assertTrue(property_exists($json, 'pageCount'));
+        });
     }
 
     public function testShouldRunThePooledRequests(){
@@ -42,15 +33,8 @@ class GroupsTest extends \PHPUnit_Framework_TestCase {
         ]);
 
         $handler = HandlerStack::create($mock);
-
         $client  = new Client(['handler' => $handler]);
-        $logMock = $this->getLogMock();
-
-        $logMock->method('setUpStreamHandler')
-                ->with('eve_online_market_groups.log')
-                ->willReturn(new StreamHandler('tmp/something.log', Logger::INFO));
-
-        $groups = new MarketGroups($client, $logMock);
+        $groups  = new MarketGroups($client);
 
         $groups->createRequestsForGroups(json_decode(json_encode(
             [['types' => ['href' => 'http://google.ca']]]
@@ -63,30 +47,21 @@ class GroupsTest extends \PHPUnit_Framework_TestCase {
         ]);
 
         $handler = HandlerStack::create($mock);
-
         $client  = new Client(['handler' => $handler]);
-        $logMock = $this->getLogMock();
-
-        $logMock->method('setUpStreamHandler')
-                ->with('eve_online_group_items_responses.log')
-                ->willReturn(new StreamHandler('tmp/something.log', Logger::INFO));
-
-        $groups = new MarketGroups($client, $logMock);
+        $groups  = new MarketGroups($client);
 
         $groups->createRequestsForGroups(json_decode(json_encode(
             [['types' => ['href' => 'http://google.ca']]]
         )));
 
-        $groups->fetchGroupsInfromation();
+        $groups->fetchGroupsInfromation(function($reason, $index){ /* Do something with the reason why it failed. */ });
 
         $this->assertNotEmpty($groups->getAcceptedResponses());
     }
 
     public function testReturnContainer() {
         $client  = new Client();
-        $logMock = $this->getLogMock();
-
-        $groups = new MarketGroups($client, $logMock);
+        $groups  = new MarketGroups($client);
 
         $this->assertNotEmpty($groups->getGroupInformationContainer(['something'], json_decode(json_encode([['name' => 'jesus']]))));
         $this->assertNotFalse($groups->getGroupInformationContainer(['something'], json_decode(json_encode([['name' => 'jesus']]))));
@@ -94,9 +69,7 @@ class GroupsTest extends \PHPUnit_Framework_TestCase {
 
     public function testReturnFalseForTheContainer() {
         $client  = new Client();
-        $logMock = $this->getLogMock();
-
-        $groups = new MarketGroups($client, $logMock);
+        $groups  = new MarketGroups($client);
 
         $this->assertFalse($groups->getGroupInformationContainer([], json_decode(json_encode([['name' => 'jesus']]))));
     }

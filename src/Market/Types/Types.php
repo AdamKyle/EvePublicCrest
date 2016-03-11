@@ -4,8 +4,6 @@ namespace EveOnline\Market\Types;
 
 use GuzzleHttp\Client;
 
-use EveOnline\Logging\EveLogHandler;
-
 /**
  * Fetches the Eve Online market types
  *
@@ -21,16 +19,8 @@ class Types {
      */
     private $client;
 
-    /**
-     * Custom Eve Log Handler.
-     *
-     * @see EveOnline\Logging\EveLogHandler
-     */
-    private $eveLogHandler;
-
-    public function __construct(Client $client, EveLogHandler $eveLogHandler) {
-        $this->client        = $client;
-        $this->eveLogHandler = $eveLogHandler;
+    public function __construct(Client $client) {
+        $this->client = $client;
     }
 
     /**
@@ -43,9 +33,6 @@ class Types {
     public function fetchTypes() {
         $response = $this->client->request('GET', 'https://public-crest.eveonline.com/market/types/');
 
-        $streamHandler = $this->eveLogHandler->setUpStreamHandler('eve_online_market_types.log');
-        $this->eveLogHandler->responseLog($response, $streamHandler);
-
         return iterator_to_array($this->getOtherPages(json_decode($response->getBody()->getContents())));
     }
 
@@ -54,12 +41,9 @@ class Types {
         yield $responseJson;
 
         while(property_exists($responseJson, 'next')) {
-            $response = $this->client->request('GET', $responseJson->next->href);
-
-            $streamHandler = $this->eveLogHandler->setUpStreamHandler('eve_online_market_types.log');
-            $this->eveLogHandler->responseLog($response, $streamHandler);
-
+            $response     = $this->client->request('GET', $responseJson->next->href);
             $responseJson = json_decode($response->getBody()->getContents());
+            
             $response->getBody()->rewind();
 
             yield json_decode($response->getBody()->getContents());

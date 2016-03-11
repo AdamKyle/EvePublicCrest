@@ -3,10 +3,6 @@
 namespace EveOnline\Market\Prices;
 
 use GuzzleHttp\Client;
-use Log;
-use Monolog\Handler\StreamHandler;
-use Monolog\Logger;
-use EveOnline\Logging\EveLogHandler;
 
 class Prices {
 
@@ -15,16 +11,8 @@ class Prices {
      */
     private $client;
 
-    /**
-     * Custom Eve Log Handler.
-     *
-     * @see EveOnline\Logging\EveLogHandler
-     */
-    private $eveLogHandler;
-
-    public function __construct(Client $client, EveLoghandler $eveLogHandler) {
-        $this->client        = $client;
-        $this->eveLogHandler = $eveLogHandler;
+    public function __construct(Client $client) {
+        $this->client = $client;
     }
 
     /**
@@ -32,15 +20,13 @@ class Prices {
      *
      * Grabs all of the market prices: https://public-crest.eveonline.com/market/prices/
      *
-     * @return decoded json of https://public-crest.eveonline.com/market/prices/
+     * @param function callback - Response call back that takes an argument of GuzzleHttp\Psr7\Response $response
+     * @return function callback
      */
-    public function prices() {
+    public function prices($callbackFunction) {
 
         $response = $this->client->request('GET', 'https://public-crest.eveonline.com/market/prices/');
 
-        $streamHandler = $this->eveLogHandler->setUpStreamHandler('eve_online_market_cached_prices.log');
-        $this->eveLogHandler->responseLog($response, $streamHandler);
-
-        return json_decode($response->getBody()->getContents());
+        return call_user_func_array($callbackFunction, array($response));
     }
 }
