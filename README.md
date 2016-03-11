@@ -154,9 +154,9 @@ historicalData->getItemHistoryForRegion(-20, function(array $regionItemPair, $re
 
 Market orders allow you to get the selling and buying order from a specific region for a specific item.
 
-We **highly** suggest you use [Regions]() class and [Market Types](https://github.com/AdamKyle/EvePublicCrest#market-types) class to get relevant information for this classes functions.
+We **highly** suggest you use [Regions](https://github.com/AdamKyle/EvePublicCrest#regions) class and [Market Types](https://github.com/AdamKyle/EvePublicCrest#market-types) class to get relevant information for this classes functions.
 
-You will need the item type href which you can get from the response of [Market Types]() and the region href, which you can also get from the [Regions](https://github.com/AdamKyle/EvePublicCrest#regions) response.
+You will need the item type href which you can get from the response of [Market Types](https://github.com/AdamKyle/EvePublicCrest#market-types) and the region href, which you can also get from the [Regions](https://github.com/AdamKyle/EvePublicCrest#regions) response.
 
 > ### ATTN!
 >
