@@ -10,7 +10,7 @@ things like Regions, Orders, Market Prices, Historical Data, Market Groups, Item
 
 The Api of this library is straight forward, simple and easy to understand. It is important to understand that Eve's Public Crest API only allows 20 concurrent connections, we only create 18.
 
-You can use this library with [Eve Public Crest Laravel Bridge Extension](). All you have to do is install the extension via composer, register the provider and associated facades and be on your way.
+You can use this library with [Eve Public Crest Laravel Bridge Extension](https://github.com/AdamKyle/Eve-Public-Crest-Laravel-Bridge-Extension). All you have to do is install the extension via composer, register the provider and associated facades and be on your way.
 
 You can use this library and a stand alone. The key importance here is that if you use this with Laravel then instead
 creating a new instance of the class you'll do `ClassName::methodName()`
