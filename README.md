@@ -50,7 +50,7 @@ I am unsure. If you have a solutions I would gladly take a PR.
 
 Each item in Eve can be fetched from the [Market Types](https://github.com/AdamKyle/EvePublicCrest#market-types) class below. How ever should you need details on a specific item, you can use the items href, example: `https://public-crest.eveonline.com/types/18/` You should When ever have to construct this url your self.
 
-When you use the Market Types](https://github.com/AdamKyle/EvePublicCrest#market-types) class below, you'll get a response back that contains objects which contain a `type->href` property. This property can be used to get the specific details of an item.
+When you use the [Market Types](https://github.com/AdamKyle/EvePublicCrest#market-types) class below, you'll get a response back that contains objects which contain a `type->href` property. This property can be used to get the specific details of an item.
 
 ```php
 
