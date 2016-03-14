@@ -5,7 +5,6 @@ namespace EveOnline\Market\History;
 use GuzzleHttp\Client;
 use GuzzleHttp\Pool;
 use GuzzleHttp\Psr7\Request;
-use \Carbon\Carbon;
 
 class MarketHistory {
 

@@ -2,8 +2,6 @@
 
 namespace EveOnline\Market\Orders;
 
-use Illuminate\Database\Eloquent\Collection;
-
 use GuzzleHttp\Client;
 use GuzzleHttp\Psr7\Request;
 
@@ -124,7 +122,7 @@ class Order {
 
     protected function getRegionDetails($regionHref) {
         $response = $this->client->request('GET', $regionHref);
-        
+
         return json_decode($response->getBody()->getContents());
     }
 
