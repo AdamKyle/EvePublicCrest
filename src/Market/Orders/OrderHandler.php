@@ -56,7 +56,7 @@ class OrderHandler {
     /**
      * Create a set of region requests for a pool.
      *
-     * @param array of region hrefs, example: https://public-crest.eveonline.com/regions/11000001/
+     * @param array of region hrefs, example: https://crest-tq.eveonline.com/regions/11000001/
      */
     public function createRegionRequestsForPool(Array $regionHrefs) {
         $this->resetContainers();

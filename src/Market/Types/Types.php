@@ -31,7 +31,7 @@ class Types {
      * @return Array of json decoded responses
      */
     public function fetchTypes() {
-        $response = $this->client->request('GET', 'https://public-crest.eveonline.com/market/types/');
+        $response = $this->client->request('GET', 'https://crest-tq.eveonline.com/market/types/');
 
         return iterator_to_array($this->getOtherPages(json_decode($response->getBody()->getContents())));
     }

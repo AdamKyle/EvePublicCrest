@@ -50,7 +50,7 @@ class MarketHistory {
         foreach($items as $item) {
             foreach ($regions as $region) {
                 array_push($this->regionAndItemPairs, [$region, $item]);
-                array_push($this->createdRequests, new Request('GET', 'https://public-crest.eveonline.com/market/'.$region.'/types/'.$item.'/history/'));
+                array_push($this->createdRequests, new Request('GET', 'https://crest-tq.eveonline.com/market/'.$region.'/types/'.$item.'/history/'));
             }
         }
     }

@@ -25,7 +25,7 @@ class Regions {
      * @return function callback
      */
     public function regions($callbackFunction) {
-        $response = $this->client->request('GET', 'https://public-crest.eveonline.com/regions/');
+        $response = $this->client->request('GET', 'https://crest-tq.eveonline.com/regions/');
 
         return call_user_func_array($callbackFunction, array($response));
     }

@@ -57,10 +57,10 @@ class MarketGroups {
      * Fetches All the groups and there associated pages.
      *
      * @param function callback - Response call back that takes an argument of GuzzleHttp\Psr7\Response $response
-     * @return decoded JSON of https://public-crest.eveonline.com/market/groups/
+     * @return decoded JSON of https://crest-tq.eveonline.com/market/groups/
      */
     public function fetchGroupPages($callbackFunction) {
-        $response = $this->client->request('GET', 'https://public-crest.eveonline.com/market/groups/');
+        $response = $this->client->request('GET', 'https://crest-tq.eveonline.com/market/groups/');
 
         return call_user_func_array($callbackFunction, array($response));
     }

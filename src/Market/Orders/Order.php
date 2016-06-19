@@ -25,8 +25,8 @@ class Order {
      * This function can return false meaning there are no buying orders for the
      * that region.
      *
-     * @param string $itemTypeHref, example: https://public-crest.eveonline.com/types/32772/
-     * @param json the region details json, example: https://public-crest.eveonline.com/regions/11000001/
+     * @param string $itemTypeHref, example: https://crest-tq.eveonline.com/types/32772/
+     * @param json the region details json, example: https://crest-tq.eveonline.com/regions/11000001/
      * @return decoded json or false
      */
     public function getBuyDetails($itemTypeHref, $regionDetailsJson) {
@@ -43,8 +43,8 @@ class Order {
      * This function can return false meaning there are no selling orders for the
      * that region.
      *
-     * @param string $itemTypeHref, example: https://public-crest.eveonline.com/types/32772/
-     * @param json the region details json, example: https://public-crest.eveonline.com/regions/11000001/
+     * @param string $itemTypeHref, example: https://crest-tq.eveonline.com/types/32772/
+     * @param json the region details json, example: https://crest-tq.eveonline.com/regions/11000001/
      * @return decoded json or false
      */
     public function getSellDetails($itemTypeHref, $regionDetailsJson) {
@@ -58,9 +58,9 @@ class Order {
     /**
      * Gets the region json for a specific region href.
      *
-     * For example: https://public-crest.eveonline.com/regions/11000001/
+     * For example: https://crest-tq.eveonline.com/regions/11000001/
      *
-     * @param string regionHref, example: https://public-crest.eveonline.com/regions/11000001/
+     * @param string regionHref, example: https://crest-tq.eveonline.com/regions/11000001/
      * @return json
      */
     public function getRegionDetailsJson($regionHref) {
@@ -92,7 +92,7 @@ class Order {
      * orders for all regions listed.
      *
      * @param array decoded JSON responses
-     * @param string item type href, example: https://public-crest.eveonline.com/types/32772/
+     * @param string item type href, example: https://crest-tq.eveonline.com/types/32772/
      * @param boolean isBuying, true - yes, false - no.
      * @return array of GuzzleHttp\Psr7\Request
      */

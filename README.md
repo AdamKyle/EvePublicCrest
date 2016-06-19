@@ -48,7 +48,7 @@ I am unsure. If you have a solutions I would gladly take a PR.
 
 ## Item Specific information
 
-Each item in Eve can be fetched from the [Market Types](https://github.com/AdamKyle/EvePublicCrest#market-types) class below. How ever should you need details on a specific item, you can use the items href, example: `https://public-crest.eveonline.com/types/18/` You should When ever have to construct this url your self.
+Each item in Eve can be fetched from the [Market Types](https://github.com/AdamKyle/EvePublicCrest#market-types) class below. How ever should you need details on a specific item, you can use the items href, example: `https://crest-tq.eveonline.com/types/18/` You should When ever have to construct this url your self.
 
 When you use the [Market Types](https://github.com/AdamKyle/EvePublicCrest#market-types) class below, you'll get a response back that contains objects which contain a `type->href` property. This property can be used to get the specific details of an item.
 
@@ -83,7 +83,7 @@ Fetches all the groups available in Eve. This one can take a while so we suggest
 $client       = new Client();
 $marketGroups = new EveOnline\Market\Groups\MarketGroups($client);
 
-// We use: https://public-crest.eveonline.com/market/groups/ to get the groups.
+// We use: https://crest-tq.eveonline.com/market/groups/ to get the groups.
 $groups = marketGroups->fetchGroupPages(function($response){
   // Get the body and the bodies contents. Then decode the json.
 
@@ -129,9 +129,9 @@ You will need to do your own filtering at this stage to only save the groups you
 
 If you ever wanted a set of historical data from a specific region with a specific or even set of, then this is class you will want. We **highly** suggest you use [Regions](https://github.com/AdamKyle/EvePublicCrest#regions) class and [Market Types](https://github.com/AdamKyle/EvePublicCrest#market-types) class to get relevant information for this classes functions.
 
-First of all you want to get the region id's and item's from the database. These are not the database id's these are Eve's id's For example: [Eve Regions](https://public-crest.eveonline.com/regions/) have an id field of: `id: 11000001` for example.
+First of all you want to get the region id's and item's from the database. These are not the database id's these are Eve's id's For example: [Eve Regions](https://crest-tq.eveonline.com/regions/) have an id field of: `id: 11000001` for example.
 
-[Eve Types](https://public-crest.eveonline.com/market/types/) contain an array of object each with an id field: `id: 18` for example. These are the id's you will want. These can be fetched by using the suggested classes above and saving the relevant data to the database.
+[Eve Types](https://crest-tq.eveonline.com/market/types/) contain an array of object each with an id field: `id: 18` for example. These are the id's you will want. These can be fetched by using the suggested classes above and saving the relevant data to the database.
 
 ```php
 // Assume you have a couple regions and a couple item id's. These ned to be arrays.
@@ -147,7 +147,7 @@ $historicalData->createRequests($regionIds, $itemIds);
 historicalData->getItemHistoryForRegion(-20, function(array $regionItemPair, $responseJson){
 
     // $regionItemPair - the array [$regionId, $itemId]
-    // $responseJson - Example response: https://public-crest.eveonline.com/market/10000002/types/34/history/
+    // $responseJson - Example response: https://crest-tq.eveonline.com/market/10000002/types/34/history/
 
 }, function($reason, $index) {
   // $reason, guzzle object or error object stating why it failed.
@@ -240,7 +240,7 @@ foreach ($orderDetails as $order) {
 
 ### Market Prices
 
-This is a rather straight forward call. We make a call to [https://public-crest.eveonline.com/market/prices/](https://public-crest.eveonline.com/market/prices/) to get all the market prices in eve. This is refreshed every 24 hours, so make sure you have a cron job set up to run.
+This is a rather straight forward call. We make a call to [https://crest-tq.eveonline.com/market/prices/](https://crest-tq.eveonline.com/market/prices/) to get all the market prices in eve. This is refreshed every 24 hours, so make sure you have a cron job set up to run.
 
 This is also the end point that CCP uses in game to show you a list of market prices when you view market details.
 
@@ -267,10 +267,10 @@ $types  = new EveOnline\Market\Types\Types($client);
 
 $typesContainer = $types->fetchTypes();
 
-// See: https://public-crest.eveonline.com/market/types/ as an example.
+// See: https://crest-tq.eveonline.com/market/types/ as an example.
 ```
 
-We will fetch every single page from [https://public-crest.eveonline.com/market/types/](https://public-crest.eveonline.com/market/types/) and return an array of arrays, where each array inside the main holds the JSON response of that page.
+We will fetch every single page from [https://crest-tq.eveonline.com/market/types/](https://crest-tq.eveonline.com/market/types/) and return an array of arrays, where each array inside the main holds the JSON response of that page.
 
 ## Regions
 
@@ -285,7 +285,7 @@ $regions->regions(function($response){
   // $response is a GuzzleHttp\Psr7\Response object.
 });
 
-// See: https://public-crest.eveonline.com/regions/ as an example.
+// See: https://crest-tq.eveonline.com/regions/ as an example.
 ```
 
 We will fetch every single region known. You will want to filter out every region with a hyphen in the name. These are either wormholes or CCP specific regions. This should leave you with an array of roughly 62 regions that players can interact with.
